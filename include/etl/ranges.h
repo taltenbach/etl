@@ -106,22 +106,22 @@ namespace etl
         return cbegin() == cend();
       }
 
-      auto cbegin() const
+      constexpr auto cbegin() const
       {
         return static_cast<const D*>(this)->begin();
       }
 
-      auto cend() const
+      constexpr auto cend() const
       {
         return static_cast<const D*>(this)->end();
       }
 
-      operator bool() const
+      constexpr operator bool() const
       {
         return !empty();
       }
 
-      size_t size() const
+      constexpr size_t size() const
       {
         return static_cast<size_t>(etl::distance(cbegin(), cend()));
       }
@@ -175,7 +175,7 @@ namespace etl
     {
     public:
 
-      auto get() const
+      constexpr auto get() const
       {
         return **(static_cast<const I*>(this));
       }
@@ -186,7 +186,7 @@ namespace etl
     {
     public:
 
-      subrange(I i, S s)
+      constexpr subrange(I i, S s)
         : _begin{i}
         , _end{s}
       {
@@ -429,54 +429,54 @@ namespace etl
       {
       }
 
-      iota_iterator& operator++()
+      constexpr iota_iterator& operator++()
       {
         ++_i;
         return *this;
       }
 
-      iota_iterator operator++(int)
+      constexpr iota_iterator operator++(int)
       {
         iota_iterator tmp = *this;
         _i++;
         return tmp;
       }
 
-      iota_iterator& operator--()
+      constexpr iota_iterator& operator--()
       {
         --_i;
         return *this;
       }
 
-      iota_iterator operator--(int)
+      constexpr iota_iterator operator--(int)
       {
         iota_iterator tmp = *this;
         _i--;
         return tmp;
       }
 
-      iota_iterator& operator+=(difference_type n)
+      constexpr iota_iterator& operator+=(difference_type n)
       {
         _i += n;
         return *this;
       }
 
-      iota_iterator operator+(difference_type n) const
+      constexpr iota_iterator operator+(difference_type n) const
       {
         return iota_iterator{static_cast<value_type>(_i + n)};
       }
 
-      iota_iterator operator-(difference_type n) const
+      constexpr iota_iterator operator-(difference_type n) const
       {
         return iota_iterator{static_cast<value_type>(_i - n)};
       }
 
-      difference_type operator-(iota_iterator other) const
+      constexpr difference_type operator-(iota_iterator other) const
       {
         return _i - other._i;
       }
 
-      iota_iterator& operator=(const iota_iterator& other)
+      constexpr iota_iterator& operator=(const iota_iterator& other)
       {
         _i = other._i;
         return *this;
@@ -599,54 +599,54 @@ namespace etl
 
       constexpr repeat_iterator(const repeat_iterator& other) = default;
 
-      repeat_iterator& operator++()
+      constexpr repeat_iterator& operator++()
       {
         --_i;
         return *this;
       }
 
-      repeat_iterator operator++(int)
+      constexpr repeat_iterator operator++(int)
       {
         repeat_iterator tmp(*this);
         _i--;
         return tmp;
       }
 
-      repeat_iterator& operator--()
+      constexpr repeat_iterator& operator--()
       {
         ++_i;
         return *this;
       }
 
-      repeat_iterator operator--(int)
+      constexpr repeat_iterator operator--(int)
       {
         repeat_iterator tmp(*this);
         _i++;
         return tmp;
       }
 
-      repeat_iterator& operator+=(difference_type n)
+      constexpr repeat_iterator& operator+=(difference_type n)
       {
         _i -= static_cast<B>(n);
         return *this;
       }
 
-      repeat_iterator operator+(difference_type n) const
+      constexpr repeat_iterator operator+(difference_type n) const
       {
         return repeat_iterator{_value, static_cast<B>(_i - static_cast<B>(n))};
       }
 
-      repeat_iterator operator-(difference_type n) const
+      constexpr repeat_iterator operator-(difference_type n) const
       {
         return repeat_iterator{_value, static_cast<B>(_i + static_cast<B>(n))};
       }
 
-      difference_type operator-(repeat_iterator other) const
+      constexpr difference_type operator-(repeat_iterator other) const
       {
         return other._i - _i;
       }
 
-      repeat_iterator& operator=(const repeat_iterator& other)
+      constexpr repeat_iterator& operator=(const repeat_iterator& other)
       {
         _i     = other._i;
         _value = other._value;
@@ -750,7 +750,7 @@ namespace etl
       template <class Range, class Closure,
                 typename = etl::enable_if_t< etl::is_base_of_v<range_adapter_closure_base, etl::decay_t<Closure>>
                                              && etl::is_invocable_v<etl::decay_t<Closure>, Range>>>
-      friend auto operator|(Range&& r, Closure&& c)
+      friend constexpr auto operator|(Range&& r, Closure&& c)
       {
         return etl::forward<Closure>(c)(etl::forward<Range>(r));
       }
@@ -770,7 +770,7 @@ namespace etl
       using const_iterator = typename etl::ranges::private_ranges::iterator_trait< Range>::const_iterator;
       using pointer        = typename etl::ranges::private_ranges::iterator_trait<Range>::pointer;
 
-      ref_view(Range& r)
+      constexpr ref_view(Range& r)
         : _r{&r}
       {
       }
@@ -821,7 +821,7 @@ namespace etl
       ref_range_adapter_closure() = default;
 
       template <typename Range>
-      ref_view<Range> operator()(Range& r)
+      constexpr ref_view<Range> operator()(Range& r)
       {
         return ref_view<Range>(r);
       }
@@ -869,7 +869,7 @@ namespace etl
 
       owning_view& operator=(const owning_view&) = delete;
 
-      owning_view& operator=(owning_view&& other)
+      constexpr owning_view& operator=(owning_view&& other)
       {
         _r = etl::move(other._r);
         return *this;
@@ -925,7 +925,7 @@ namespace etl
       owning_range_adapter_closure() = default;
 
       template <typename Range, typename CleanRange = etl::remove_reference_t<Range>>
-      owning_view<CleanRange> operator()(Range&& r)
+      constexpr owning_view<CleanRange> operator()(Range&& r)
       {
         return owning_view<CleanRange>(etl::move(r));
       }
@@ -1007,7 +1007,7 @@ namespace etl
 
       using iterator_category = ETL_OR_STD::bidirectional_iterator_tag;
 
-      filter_iterator(iterator it, iterator it_end, const Pred& p)
+      constexpr filter_iterator(iterator it, iterator it_end, const Pred& p)
         : _it{it}
         , _it_begin{it}
         , _it_end{it_end}
@@ -1019,7 +1019,7 @@ namespace etl
         }
       }
 
-      filter_iterator(const filter_iterator& other)
+      constexpr filter_iterator(const filter_iterator& other)
         : _it{other._it}
         , _it_begin{other._it_begin}
         , _it_end{other._it_end}
@@ -1031,7 +1031,7 @@ namespace etl
         }
       }
 
-      filter_iterator& operator++()
+      constexpr filter_iterator& operator++()
       {
         ++_it;
         while (_it != _it_end && !_p(*_it))
@@ -1041,7 +1041,7 @@ namespace etl
         return *this;
       }
 
-      filter_iterator operator++(int)
+      constexpr filter_iterator operator++(int)
       {
         filter_iterator tmp = *this;
 
@@ -1054,7 +1054,7 @@ namespace etl
         return tmp;
       }
 
-      filter_iterator& operator--()
+      constexpr filter_iterator& operator--()
       {
         --_it;
         while (_it != _it_begin && !_p(*_it))
@@ -1064,7 +1064,7 @@ namespace etl
         return *this;
       }
 
-      filter_iterator operator--(int)
+      constexpr filter_iterator operator--(int)
       {
         filter_iterator tmp = *this;
 
@@ -1077,7 +1077,7 @@ namespace etl
         return tmp;
       }
 
-      filter_iterator& operator+=(size_t n)
+      constexpr filter_iterator& operator+=(size_t n)
       {
         for (size_t i = 0; i < n; i++)
         {
@@ -1090,7 +1090,7 @@ namespace etl
         return *this;
       }
 
-      filter_iterator& operator-=(size_t n)
+      constexpr filter_iterator& operator-=(size_t n)
       {
         for (size_t i = 0; i < n; i++)
         {
@@ -1103,7 +1103,7 @@ namespace etl
         return *this;
       }
 
-      filter_iterator& operator=(const filter_iterator& other)
+      constexpr filter_iterator& operator=(const filter_iterator& other)
       {
         _it       = other._it;
         _it_begin = other._it_begin;
@@ -1112,17 +1112,17 @@ namespace etl
         return *this;
       }
 
-      reference operator*()
+      constexpr reference operator*()
       {
         return *_it;
       }
 
-      bool operator==(const filter_iterator& other) const
+      constexpr bool operator==(const filter_iterator& other) const
       {
         return other._it == _it;
       }
 
-      bool operator!=(const filter_iterator& other) const
+      constexpr bool operator!=(const filter_iterator& other) const
       {
         return !(*this == other);
       }
@@ -1157,7 +1157,7 @@ namespace etl
       using iterator       = filter_iterator<Range, Pred>;
       using const_iterator = filter_iterator<Range, Pred>;
 
-      filter_view(Range&& r, const Pred& pred)
+      constexpr filter_view(Range&& r, const Pred& pred)
         : _pred{pred}
         , _r{etl::move(r)}
       {
@@ -1198,7 +1198,7 @@ namespace etl
       template <typename Range>
       using target_view_type = filter_view<Range, Pred>;
 
-      filter_range_adapter_closure(const Pred& p)
+      constexpr filter_range_adapter_closure(const Pred& p)
         : _p{p}
       {
       }
@@ -1255,49 +1255,49 @@ namespace etl
 
       using iterator_category = ETL_OR_STD::forward_iterator_tag;
 
-      transform_iterator(const_iterator it, const Fun& f)
+      constexpr transform_iterator(const_iterator it, const Fun& f)
         : _it(it)
         , _f(f)
       {
       }
 
-      transform_iterator(const transform_iterator& other)
+      constexpr transform_iterator(const transform_iterator& other)
         : _it{other._it}
         , _f{other._f}
       {
       }
 
-      transform_iterator& operator++()
+      constexpr transform_iterator& operator++()
       {
         ++_it;
         return *this;
       }
 
-      transform_iterator operator++(int)
+      constexpr transform_iterator operator++(int)
       {
         transform_iterator tmp = *this;
         _it++;
         return tmp;
       }
 
-      transform_iterator& operator=(const transform_iterator& other)
+      constexpr transform_iterator& operator=(const transform_iterator& other)
       {
         _it = other._it;
         ETL_ASSERT(&_f == &other._f, ETL_ERROR_GENERIC("Transform functions need to be the same"));
         return *this;
       }
 
-      reference operator*()
+      constexpr reference operator*()
       {
         return _f(*_it);
       }
 
-      bool operator==(const transform_iterator& other) const
+      constexpr bool operator==(const transform_iterator& other) const
       {
         return other._it == _it;
       }
 
-      bool operator!=(const transform_iterator& other) const
+      constexpr bool operator!=(const transform_iterator& other) const
       {
         return !(*this == other);
       }
@@ -1316,7 +1316,7 @@ namespace etl
       using iterator       = transform_iterator<Range, Fun>;
       using const_iterator = transform_iterator<Range, Fun>;
 
-      transform_view(Range&& r, const Fun& fun)
+      constexpr transform_view(Range&& r, const Fun& fun)
         : _fun{fun}
         , _r{etl::move(r)}
       {
@@ -1357,7 +1357,7 @@ namespace etl
       template <typename Range>
       using target_view_type = transform_view<Range, Fun>;
 
-      transform_range_adapter_closure(const Fun& f)
+      constexpr transform_range_adapter_closure(const Fun& f)
         : _f{f}
       {
       }
@@ -1403,7 +1403,7 @@ namespace etl
 
       as_rvalue_view(const as_rvalue_view& other) = default;
 
-      as_rvalue_view(Range&& r)
+      constexpr explicit as_rvalue_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -1482,7 +1482,7 @@ namespace etl
 
       as_const_view(const as_const_view& other) = default;
 
-      as_const_view(Range&& r)
+      constexpr explicit as_const_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -1561,7 +1561,7 @@ namespace etl
       template <typename T>
       struct cache_latest_cache
       {
-        cache_latest_cache()
+        constexpr cache_latest_cache()
           : _has_value{false}
           , _value{}
         {
@@ -1570,23 +1570,23 @@ namespace etl
         cache_latest_cache(const cache_latest_cache&)            = delete;
         cache_latest_cache& operator=(const cache_latest_cache&) = delete;
 
-        bool has_value() const
+        constexpr bool has_value() const
         {
           return _has_value;
         }
 
-        void set(const T& v)
+        constexpr void set(const T& v)
         {
           _value     = v;
           _has_value = true;
         }
 
-        void reset()
+        constexpr void reset()
         {
           _has_value = false;
         }
 
-        T& value()
+        constexpr T& value()
         {
           return _value;
         }
@@ -1617,19 +1617,19 @@ namespace etl
 
       cache_latest_iterator() = default;
 
-      cache_latest_iterator(const_iterator it, private_ranges::cache_latest_cache<value_type>* cache)
+      constexpr cache_latest_iterator(const_iterator it, private_ranges::cache_latest_cache<value_type>* cache)
         : _it(it)
         , _cache(cache)
       {
       }
 
-      cache_latest_iterator(const cache_latest_iterator& other)
+      constexpr cache_latest_iterator(const cache_latest_iterator& other)
         : _it(other._it)
         , _cache(other._cache)
       {
       }
 
-      cache_latest_iterator& operator++()
+      constexpr cache_latest_iterator& operator++()
       {
         ++_it;
         if (_cache)
@@ -1639,21 +1639,21 @@ namespace etl
         return *this;
       }
 
-      cache_latest_iterator operator++(int)
+      constexpr cache_latest_iterator operator++(int)
       {
         cache_latest_iterator tmp = *this;
         ++(*this);
         return tmp;
       }
 
-      cache_latest_iterator& operator=(const cache_latest_iterator& other)
+      constexpr cache_latest_iterator& operator=(const cache_latest_iterator& other)
       {
         _it    = other._it;
         _cache = other._cache;
         return *this;
       }
 
-      reference operator*() const
+      constexpr reference operator*() const
       {
         if (_cache && !_cache->has_value())
         {
@@ -1662,17 +1662,17 @@ namespace etl
         return _cache->value();
       }
 
-      pointer operator->() const
+      constexpr pointer operator->() const
       {
         return &(**this);
       }
 
-      bool operator==(const cache_latest_iterator& other) const
+      constexpr bool operator==(const cache_latest_iterator& other) const
       {
         return other._it == _it;
       }
 
-      bool operator!=(const cache_latest_iterator& other) const
+      constexpr bool operator!=(const cache_latest_iterator& other) const
       {
         return !(*this == other);
       }
@@ -1698,13 +1698,13 @@ namespace etl
       using const_iterator = cache_latest_iterator<Range>;
       using value_type     = typename etl::ranges::private_ranges::iterator_trait<Range>::value_type;
 
-      cache_latest_view(Range&& r)
+      constexpr cache_latest_view(Range&& r)
         : _r{etl::move(r)}
         , _cache{}
       {
       }
 
-      cache_latest_view(const cache_latest_view& other)
+      constexpr cache_latest_view(const cache_latest_view& other)
         : _r{other._r}
         , _cache{}
       {
@@ -2293,7 +2293,7 @@ namespace etl
       using value_type = etl::remove_cvref_t<reference>;
       using pointer    = typename inner_trait::pointer;
 
-      join_iterator(iterator it, iterator it_end)
+      constexpr join_iterator(iterator it, iterator it_end)
         : _it(it)
         , _it_end(it_end)
         , _inner_it(it != it_end ? ETL_OR_STD::begin(*it) : inner_iterator{})
@@ -2304,7 +2304,7 @@ namespace etl
 
       join_iterator(const join_iterator& other) = default;
 
-      join_iterator& operator++()
+      constexpr join_iterator& operator++()
       {
         if (_inner_it != _inner_it_end)
         {
@@ -2316,7 +2316,7 @@ namespace etl
         return *this;
       }
 
-      join_iterator operator++(int)
+      constexpr join_iterator operator++(int)
       {
         join_iterator tmp{*this};
 
@@ -2330,7 +2330,7 @@ namespace etl
         return tmp;
       }
 
-      join_iterator& operator=(const join_iterator& other)
+      constexpr join_iterator& operator=(const join_iterator& other)
       {
         _it           = other._it;
         _it_end       = other._it_end;
@@ -2342,7 +2342,7 @@ namespace etl
         return *this;
       }
 
-      reference operator*() const
+      constexpr reference operator*() const
       {
         return *_inner_it;
       }
@@ -2359,7 +2359,7 @@ namespace etl
 
     private:
 
-      void adjust_iterator()
+      constexpr void adjust_iterator()
       {
         while (_it != _it_end && _inner_it == _inner_it_end)
         {
@@ -2386,7 +2386,7 @@ namespace etl
       using iterator       = join_iterator<Range>;
       using const_iterator = join_iterator<Range>;
 
-      join_view(Range&& r)
+      constexpr join_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -2508,7 +2508,7 @@ namespace etl
       using reference  = typename etl::ranges::private_ranges::join_with_reference<inner_reference, pattern_reference>::type;
       using pointer    = typename inner_trait::pointer;
 
-      join_with_iterator(iterator it, iterator it_end, const Pattern& pattern)
+      constexpr join_with_iterator(iterator it, iterator it_end, const Pattern& pattern)
         : _it(it)
         , _it_end(it_end)
         , _inner_it(it != it_end ? ETL_OR_STD::begin(*it) : inner_iterator{})
@@ -2522,7 +2522,7 @@ namespace etl
 
       join_with_iterator(const join_with_iterator& other) = default;
 
-      join_with_iterator& operator++()
+      constexpr join_with_iterator& operator++()
       {
         if (_pattern_it != _pattern_it_end)
         {
@@ -2538,7 +2538,7 @@ namespace etl
         return *this;
       }
 
-      join_with_iterator operator++(int)
+      constexpr join_with_iterator operator++(int)
       {
         join_with_iterator tmp{*this};
 
@@ -2556,7 +2556,7 @@ namespace etl
         return tmp;
       }
 
-      join_with_iterator& operator=(const join_with_iterator& other)
+      constexpr join_with_iterator& operator=(const join_with_iterator& other)
       {
         _it             = other._it;
         _it_end         = other._it_end;
@@ -2570,7 +2570,7 @@ namespace etl
         return *this;
       }
 
-      reference operator*() const
+      constexpr reference operator*() const
       {
         if (_pattern_it != _pattern_it_end)
         {
@@ -2591,7 +2591,7 @@ namespace etl
 
     private:
 
-      void adjust_iterator()
+      constexpr void adjust_iterator()
       {
         if (_it != _it_end && _inner_it == _inner_it_end && _pattern_it == _pattern_it_end)
         {
@@ -2623,7 +2623,7 @@ namespace etl
       using iterator       = join_with_iterator<Range, Pattern>;
       using const_iterator = join_with_iterator<Range, Pattern>;
 
-      join_with_view(Range&& r, Pattern&& pattern)
+      constexpr join_with_view(Range&& r, Pattern&& pattern)
         : _r{etl::move(r)}
         , _pattern{etl::move(pattern)}
       {
@@ -2694,7 +2694,7 @@ namespace etl
       template <typename Range>
       using target_view_type = join_with_view<Range, Pattern>;
 
-      join_with_range_adapter_closure(const Pattern& pattern)
+      constexpr join_with_range_adapter_closure(const Pattern& pattern)
         : _pattern(pattern)
       {
       }
@@ -2752,7 +2752,7 @@ namespace etl
       using pointer    = value_type*;
       using reference  = value_type;
 
-      split_iterator(iterator it, iterator it_end, const Pattern& pattern, bool is_end = false)
+      constexpr split_iterator(iterator it, iterator it_end, const Pattern& pattern, bool is_end = false)
         : _it(it)
         , _it_end(it_end)
         , _pattern(pattern)
@@ -2763,7 +2763,7 @@ namespace etl
 
       split_iterator(const split_iterator& other) = default;
 
-      split_iterator& operator++()
+      constexpr split_iterator& operator++()
       {
         _it = _next;
 
@@ -2792,14 +2792,14 @@ namespace etl
         return *this;
       }
 
-      split_iterator operator++(int)
+      constexpr split_iterator operator++(int)
       {
         split_iterator tmp{*this};
         ++(*this);
         return tmp;
       }
 
-      split_iterator& operator=(const split_iterator& other)
+      constexpr split_iterator& operator=(const split_iterator& other)
       {
         _it             = other._it;
         _it_end         = other._it_end;
@@ -2808,7 +2808,7 @@ namespace etl
         return *this;
       }
 
-      value_type operator*() const
+      constexpr value_type operator*() const
       {
         return value_type(_it, _next);
       }
@@ -2829,7 +2829,7 @@ namespace etl
 
     private:
 
-      iterator find_next() const
+      constexpr iterator find_next() const
       {
         auto pat_begin = ETL_OR_STD::cbegin(_pattern);
         auto pat_end   = ETL_OR_STD::cend(_pattern);
@@ -2888,7 +2888,7 @@ namespace etl
       using iterator       = split_iterator<Range, Pattern>;
       using const_iterator = split_iterator<Range, Pattern>;
 
-      split_view(Range&& r, Pattern&& pattern)
+      constexpr split_view(Range&& r, Pattern&& pattern)
         : _r{etl::move(r)}
         , _pattern{etl::move(pattern)}
       {
@@ -2935,7 +2935,7 @@ namespace etl
       template <typename Range>
       using target_view_type = split_view<Range, Pattern>;
 
-      split_range_adapter_closure(const Pattern& pattern)
+      constexpr split_range_adapter_closure(const Pattern& pattern)
         : _pattern(pattern)
       {
       }
@@ -3028,7 +3028,7 @@ namespace etl
 
         iterator() = default;
 
-        iterator(iterator_type current, iterator_type segment_end, bool is_end)
+        constexpr iterator(iterator_type current, iterator_type segment_end, bool is_end)
           : _current_it(current)
           , _segment_end(segment_end)
           , _is_end(is_end || (current == segment_end))
@@ -3040,12 +3040,12 @@ namespace etl
           return *_current_it;
         }
 
-        pointer operator->() const
+        constexpr pointer operator->() const
         {
           return &(*_current_it);
         }
 
-        iterator& operator++()
+        constexpr iterator& operator++()
         {
           ++_current_it;
           if (_current_it == _segment_end)
@@ -3055,7 +3055,7 @@ namespace etl
           return *this;
         }
 
-        iterator operator++(int)
+        constexpr iterator operator++(int)
         {
           iterator tmp{*this};
           ++(*this);
@@ -3089,23 +3089,23 @@ namespace etl
 
       using const_iterator = iterator;
 
-      lazy_split_inner_range(iterator_type segment_begin, iterator_type segment_end)
+      constexpr lazy_split_inner_range(iterator_type segment_begin, iterator_type segment_end)
         : _segment_begin(segment_begin)
         , _segment_end(segment_end)
       {
       }
 
-      iterator begin() const
+      constexpr iterator begin() const
       {
         return iterator(_segment_begin, _segment_end, false);
       }
 
-      iterator end() const
+      constexpr iterator end() const
       {
         return iterator(_segment_end, _segment_end, true);
       }
 
-      bool empty() const
+      constexpr bool empty() const
       {
         return _segment_begin == _segment_end;
       }
@@ -3139,7 +3139,7 @@ namespace etl
       using pointer    = value_type*;
       using reference  = value_type;
 
-      lazy_split_iterator(source_iterator it, source_iterator it_end, const Pattern& pattern, bool is_end = false)
+      constexpr lazy_split_iterator(source_iterator it, source_iterator it_end, const Pattern& pattern, bool is_end = false)
         : _it(it)
         , _it_end(it_end)
         , _pattern(pattern)
@@ -3150,7 +3150,7 @@ namespace etl
 
       lazy_split_iterator(const lazy_split_iterator& other) = default;
 
-      lazy_split_iterator& operator=(const lazy_split_iterator& other)
+      constexpr lazy_split_iterator& operator=(const lazy_split_iterator& other)
       {
         _it             = other._it;
         _it_end         = other._it_end;
@@ -3159,7 +3159,7 @@ namespace etl
         return *this;
       }
 
-      lazy_split_iterator& operator++()
+      constexpr lazy_split_iterator& operator++()
       {
         _it = _next;
 
@@ -3188,7 +3188,7 @@ namespace etl
         return *this;
       }
 
-      lazy_split_iterator operator++(int)
+      constexpr lazy_split_iterator operator++(int)
       {
         lazy_split_iterator tmp{*this};
         ++(*this);
@@ -3197,7 +3197,7 @@ namespace etl
 
       /// Returns a lazy inner range — the caller iterates it
       /// element-by-element.
-      value_type operator*() const
+      constexpr value_type operator*() const
       {
         return value_type(_it, _next);
       }
@@ -3220,7 +3220,7 @@ namespace etl
 
       /// Scans forward from _it looking for the pattern; returns the
       /// position of the first match (i.e. the end of the current segment).
-      source_iterator find_next() const
+      constexpr source_iterator find_next() const
       {
         auto pat_begin = ETL_OR_STD::cbegin(_pattern);
         auto pat_end   = ETL_OR_STD::cend(_pattern);
@@ -3277,7 +3277,7 @@ namespace etl
       using iterator       = lazy_split_iterator<Range, Pattern>;
       using const_iterator = lazy_split_iterator<Range, Pattern>;
 
-      lazy_split_view(Range&& r, Pattern&& pattern)
+      constexpr lazy_split_view(Range&& r, Pattern&& pattern)
         : _r{etl::move(r)}
         , _pattern{etl::move(pattern)}
       {
@@ -3323,7 +3323,7 @@ namespace etl
       template <typename Range>
       using target_view_type = lazy_split_view<Range, Pattern>;
 
-      lazy_split_range_adapter_closure(const Pattern& pattern)
+      constexpr lazy_split_range_adapter_closure(const Pattern& pattern)
         : _pattern(pattern)
       {
       }
@@ -3430,7 +3430,7 @@ namespace etl
 
       using iterator_variant_type = typename concat_view<Ranges...>::iterator_variant_type;
 
-      concat_iterator(size_t index, concat_view<Ranges...>& view, iterator_variant_type current)
+      constexpr concat_iterator(size_t index, concat_view<Ranges...>& view, iterator_variant_type current)
         : _ranges_index{index}
         , _view(view)
         , _current_it(current)
@@ -3606,13 +3606,13 @@ namespace etl
       }
 
       // helper to advance iterator index+iterator variant
-      void advance(size_t& index, iterator_variant_type& current, difference_type n) const
+      constexpr void advance(size_t& index, iterator_variant_type& current, difference_type n) const
       {
         advance_delegates[index](index, _r, current, n);
       }
 
       template <size_t i = 0>
-      void set_delegates()
+      constexpr void set_delegates()
       {
         if constexpr (i < number_of_ranges)
         {
@@ -3680,7 +3680,7 @@ namespace etl
         }
       }
 
-      reference get_value(size_t index, const iterator_variant_type& current) const
+      constexpr reference get_value(size_t index, const iterator_variant_type& current) const
       {
         return get_value_delegates[index](current);
       }
@@ -4345,26 +4345,26 @@ namespace etl
 
       using iterator_category = ETL_OR_STD::forward_iterator_tag;
 
-      enumerate_iterator(base_iterator it, size_t index)
+      constexpr enumerate_iterator(base_iterator it, size_t index)
         : _it(it)
         , _index(index)
       {
       }
 
-      enumerate_iterator(const enumerate_iterator& other)
+      constexpr enumerate_iterator(const enumerate_iterator& other)
         : _it{other._it}
         , _index{other._index}
       {
       }
 
-      enumerate_iterator& operator++()
+      constexpr enumerate_iterator& operator++()
       {
         ++_it;
         ++_index;
         return *this;
       }
 
-      enumerate_iterator operator++(int)
+      constexpr enumerate_iterator operator++(int)
       {
         enumerate_iterator tmp = *this;
         ++_it;
@@ -4372,24 +4372,24 @@ namespace etl
         return tmp;
       }
 
-      enumerate_iterator& operator=(const enumerate_iterator& other)
+      constexpr enumerate_iterator& operator=(const enumerate_iterator& other)
       {
         _it    = other._it;
         _index = other._index;
         return *this;
       }
 
-      reference operator*() const
+      constexpr reference operator*() const
       {
         return reference(_index, *_it);
       }
 
-      bool operator==(const enumerate_iterator& other) const
+      constexpr bool operator==(const enumerate_iterator& other) const
       {
         return other._it == _it;
       }
 
-      bool operator!=(const enumerate_iterator& other) const
+      constexpr bool operator!=(const enumerate_iterator& other) const
       {
         return !(*this == other);
       }
@@ -4413,7 +4413,7 @@ namespace etl
       using iterator       = enumerate_iterator<Range>;
       using const_iterator = enumerate_iterator<Range>;
 
-      enumerate_view(Range&& r)
+      constexpr enumerate_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -4520,46 +4520,46 @@ namespace etl
 
       using iterator_category = ETL_OR_STD::forward_iterator_tag;
 
-      elements_iterator(base_iterator it)
+      constexpr elements_iterator(base_iterator it)
         : _it(it)
       {
       }
 
-      elements_iterator(const elements_iterator& other)
+      constexpr elements_iterator(const elements_iterator& other)
         : _it{other._it}
       {
       }
 
-      elements_iterator& operator++()
+      constexpr elements_iterator& operator++()
       {
         ++_it;
         return *this;
       }
 
-      elements_iterator operator++(int)
+      constexpr elements_iterator operator++(int)
       {
         elements_iterator tmp = *this;
         _it++;
         return tmp;
       }
 
-      elements_iterator& operator=(const elements_iterator& other)
+      constexpr elements_iterator& operator=(const elements_iterator& other)
       {
         _it = other._it;
         return *this;
       }
 
-      decltype(auto) operator*() const
+      constexpr decltype(auto) operator*() const
       {
         return deref_element(_it);
       }
 
-      bool operator==(const elements_iterator& other) const
+      constexpr bool operator==(const elements_iterator& other) const
       {
         return other._it == _it;
       }
 
-      bool operator!=(const elements_iterator& other) const
+      constexpr bool operator!=(const elements_iterator& other) const
       {
         return !(*this == other);
       }
@@ -4582,7 +4582,7 @@ namespace etl
       using iterator       = elements_iterator<Range, N>;
       using const_iterator = elements_iterator<Range, N>;
 
-      elements_view(Range&& r)
+      constexpr elements_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -5059,7 +5059,7 @@ namespace etl
       template <typename Range>
       using target_view_type = adjacent_transform_view<Range, Fun, N>;
 
-      adjacent_transform_range_adapter_closure(Fun f)
+      constexpr adjacent_transform_range_adapter_closure(Fun f)
         : _f{f}
       {
       }
@@ -5121,7 +5121,7 @@ namespace etl
       using pointer    = value_type*;
       using reference  = value_type;
 
-      chunk_iterator(inner_iterator it, inner_iterator it_end, difference_type chunk_size)
+      constexpr chunk_iterator(inner_iterator it, inner_iterator it_end, difference_type chunk_size)
         : _it(it)
         , _it_end(it_end)
         , _chunk_size(chunk_size)
@@ -5130,9 +5130,9 @@ namespace etl
 
       chunk_iterator(const chunk_iterator& other) = default;
 
-      chunk_iterator& operator=(const chunk_iterator& other) = default;
+      constexpr chunk_iterator& operator=(const chunk_iterator& other) = default;
 
-      chunk_iterator& operator++()
+      constexpr chunk_iterator& operator++()
       {
         difference_type remaining = etl::distance(_it, _it_end);
         difference_type step      = (_chunk_size < remaining) ? _chunk_size : remaining;
@@ -5140,14 +5140,14 @@ namespace etl
         return *this;
       }
 
-      chunk_iterator operator++(int)
+      constexpr chunk_iterator operator++(int)
       {
         chunk_iterator tmp{*this};
         ++(*this);
         return tmp;
       }
 
-      value_type operator*() const
+      constexpr value_type operator*() const
       {
         difference_type remaining = etl::distance(_it, _it_end);
         difference_type step      = (_chunk_size < remaining) ? _chunk_size : remaining;
@@ -5283,7 +5283,7 @@ namespace etl
       using pointer    = value_type*;
       using reference  = value_type;
 
-      slide_iterator(inner_iterator it, inner_iterator it_end, difference_type window_size)
+      constexpr slide_iterator(inner_iterator it, inner_iterator it_end, difference_type window_size)
         : _it(it)
         , _it_end(it_end)
         , _window_size(window_size)
@@ -5292,22 +5292,22 @@ namespace etl
 
       slide_iterator(const slide_iterator& other) = default;
 
-      slide_iterator& operator=(const slide_iterator& other) = default;
+      constexpr slide_iterator& operator=(const slide_iterator& other) = default;
 
-      slide_iterator& operator++()
+      constexpr slide_iterator& operator++()
       {
         ++_it;
         return *this;
       }
 
-      slide_iterator operator++(int)
+      constexpr slide_iterator operator++(int)
       {
         slide_iterator tmp{*this};
         ++(*this);
         return tmp;
       }
 
-      value_type operator*() const
+      constexpr value_type operator*() const
       {
         inner_iterator window_end = _it;
         etl::advance(window_end, _window_size);
@@ -5459,7 +5459,7 @@ namespace etl
       using pointer    = value_type*;
       using reference  = value_type;
 
-      chunk_by_iterator(inner_iterator it, inner_iterator it_end, const Pred& pred)
+      constexpr chunk_by_iterator(inner_iterator it, inner_iterator it_end, const Pred& pred)
         : _it(it)
         , _it_end(it_end)
         , _pred(pred)
@@ -5469,23 +5469,23 @@ namespace etl
 
       chunk_by_iterator(const chunk_by_iterator& other) = default;
 
-      chunk_by_iterator& operator=(const chunk_by_iterator& other) = default;
+      constexpr chunk_by_iterator& operator=(const chunk_by_iterator& other) = default;
 
-      chunk_by_iterator& operator++()
+      constexpr chunk_by_iterator& operator++()
       {
         _it        = _chunk_end;
         _chunk_end = find_next_chunk_end();
         return *this;
       }
 
-      chunk_by_iterator operator++(int)
+      constexpr chunk_by_iterator operator++(int)
       {
         chunk_by_iterator tmp{*this};
         ++(*this);
         return tmp;
       }
 
-      value_type operator*() const
+      constexpr value_type operator*() const
       {
         return value_type(_it, _chunk_end);
       }
@@ -5502,7 +5502,7 @@ namespace etl
 
     private:
 
-      inner_iterator find_next_chunk_end() const
+      constexpr inner_iterator find_next_chunk_end() const
       {
         if (_it == _it_end)
         {
@@ -5546,7 +5546,7 @@ namespace etl
       using iterator       = chunk_by_iterator<Range, Pred>;
       using const_iterator = chunk_by_iterator<Range, Pred>;
 
-      chunk_by_view(Range&& r, const Pred& pred)
+      constexpr chunk_by_view(Range&& r, const Pred& pred)
         : _r{etl::move(r)}
         , _pred{pred}
       {
@@ -5589,7 +5589,7 @@ namespace etl
       template <typename Range>
       using target_view_type = chunk_by_view<Range, Pred>;
 
-      chunk_by_range_adapter_closure(const Pred& p)
+      constexpr chunk_by_range_adapter_closure(const Pred& p)
         : _p{p}
       {
       }
@@ -6029,44 +6029,44 @@ namespace etl
 
       to_input_iterator() = default;
 
-      to_input_iterator(iterator it)
+      constexpr to_input_iterator(iterator it)
         : _it(it)
       {
       }
 
       to_input_iterator(const to_input_iterator& other) = default;
 
-      to_input_iterator& operator=(const to_input_iterator& other) = default;
+      constexpr to_input_iterator& operator=(const to_input_iterator& other) = default;
 
-      to_input_iterator& operator++()
+      constexpr to_input_iterator& operator++()
       {
         ++_it;
         return *this;
       }
 
-      to_input_iterator operator++(int)
+      constexpr to_input_iterator operator++(int)
       {
         to_input_iterator tmp = *this;
         ++(*this);
         return tmp;
       }
 
-      decltype(auto) operator*() const
+      constexpr decltype(auto) operator*() const
       {
         return *_it;
       }
 
-      pointer operator->() const
+      constexpr pointer operator->() const
       {
         return &(*_it);
       }
 
-      bool operator==(const to_input_iterator& other) const
+      constexpr bool operator==(const to_input_iterator& other) const
       {
         return _it == other._it;
       }
 
-      bool operator!=(const to_input_iterator& other) const
+      constexpr bool operator!=(const to_input_iterator& other) const
       {
         return !(*this == other);
       }
@@ -6093,7 +6093,7 @@ namespace etl
 
       to_input_view(const to_input_view& other) = default;
 
-      to_input_view(Range&& r)
+      constexpr to_input_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -6190,7 +6190,7 @@ namespace etl
         to_range_adapter_closure() = default;
 
         template <class Range>
-        C operator()(const Range& r) const
+        constexpr C operator()(const Range& r) const
         {
           using result_type = C;
 
@@ -6205,7 +6205,7 @@ namespace etl
         }
 
         template <class Range>
-        C operator()(Range&& r)
+        constexpr C operator()(Range&& r)
         {
           using result_type = C;
 
@@ -6222,7 +6222,7 @@ namespace etl
     } // namespace private_ranges
 
     template <class C>
-    private_ranges::to_range_adapter_closure<C> to()
+    constexpr private_ranges::to_range_adapter_closure<C> to()
     {
       return private_ranges::to_range_adapter_closure<C>();
     }
