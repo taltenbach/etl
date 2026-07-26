@@ -310,12 +310,12 @@ namespace etl
       using iterator       = value_type*;
       using const_iterator = const value_type*;
 
-      constexpr single_view(const T& t) noexcept
+      constexpr explicit single_view(const T& t) noexcept
         : _value(t)
       {
       }
 
-      constexpr single_view(T&& t) noexcept
+      constexpr explicit single_view(T&& t) noexcept
         : _value(etl::move(t))
       {
       }
@@ -2894,6 +2894,12 @@ namespace etl
       {
       }
 
+      constexpr explicit split_view(Range&& r, range_value_t<Range> e)
+        : _r{views::all(etl::forward<Range>(r))}
+        , _pattern{views::single(etl::move(e))}
+      {
+      }
+
       constexpr Range& base() const&
       {
         return _r;
@@ -2926,8 +2932,8 @@ namespace etl
     split_view(Range&&, Pattern&&) -> split_view<views::all_t<Range>, views::all_t<Pattern>>;
 
     // For single value as delimiter (Pattern is not a range)
-    template < class Range, class Pattern, etl::enable_if_t<!etl::is_class_v<etl::decay_t<Pattern>>, int> = 0>
-    split_view(Range&&, Pattern&&) -> split_view<views::all_t<Range>, etl::ranges::single_view<etl::decay_t<Pattern>>>;
+    template <class Range>
+    split_view(Range&&, range_value_t<Range>) -> split_view<views::all_t<Range>, single_view<range_value_t<Range>>>;
 
     template <class Pattern>
     struct split_range_adapter_closure : public range_adapter_closure<split_range_adapter_closure<Pattern>>
@@ -3283,6 +3289,12 @@ namespace etl
       {
       }
 
+      constexpr explicit lazy_split_view(Range&& r, range_value_t<Range> e)
+        : _r{views::all(etl::forward<Range>(r))}
+        , _pattern{views::single(etl::move(e))}
+      {
+      }
+
       constexpr Range& base() const&
       {
         return _r;
@@ -3314,8 +3326,8 @@ namespace etl
     lazy_split_view(Range&&, Pattern&&) -> lazy_split_view<views::all_t<Range>, views::all_t<Pattern>>;
 
     // Deduction guide: single-value delimiter (Pattern is not a range)
-    template < class Range, class Pattern, etl::enable_if_t<!etl::is_class_v<etl::decay_t<Pattern>>, int> = 0>
-    lazy_split_view(Range&&, Pattern&&) -> lazy_split_view<views::all_t<Range>, etl::ranges::single_view<etl::decay_t<Pattern>>>;
+    template <class Range>
+    lazy_split_view(Range&&, range_value_t<Range>) -> lazy_split_view<views::all_t<Range>, single_view<range_value_t<Range>>>;
 
     template <class Pattern>
     struct lazy_split_range_adapter_closure : public range_adapter_closure<lazy_split_range_adapter_closure<Pattern>>
