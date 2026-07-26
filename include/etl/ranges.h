@@ -1157,7 +1157,7 @@ namespace etl
       using iterator       = filter_iterator<Range, Pred>;
       using const_iterator = filter_iterator<Range, Pred>;
 
-      constexpr filter_view(Range&& r, const Pred& pred)
+      constexpr explicit filter_view(Range&& r, const Pred& pred)
         : _pred{pred}
         , _r{etl::move(r)}
       {
@@ -1316,7 +1316,7 @@ namespace etl
       using iterator       = transform_iterator<Range, Fun>;
       using const_iterator = transform_iterator<Range, Fun>;
 
-      constexpr transform_view(Range&& r, const Fun& fun)
+      constexpr explicit transform_view(Range&& r, const Fun& fun)
         : _fun{fun}
         , _r{etl::move(r)}
       {
@@ -1698,7 +1698,7 @@ namespace etl
       using const_iterator = cache_latest_iterator<Range>;
       using value_type     = typename etl::ranges::private_ranges::iterator_trait<Range>::value_type;
 
-      constexpr cache_latest_view(Range&& r)
+      constexpr explicit cache_latest_view(Range&& r)
         : _r{etl::move(r)}
         , _cache{}
       {
@@ -1785,7 +1785,7 @@ namespace etl
       using const_iterator  = ETL_OR_STD::reverse_iterator< typename etl::ranges::private_ranges::iterator_trait<Range>::const_iterator>;
       using difference_type = typename etl::ranges::private_ranges::iterator_trait< Range>::difference_type;
 
-      constexpr reverse_view(Range&& r)
+      constexpr explicit reverse_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -1863,7 +1863,7 @@ namespace etl
       using const_iterator  = typename etl::ranges::private_ranges::iterator_trait< Range>::const_iterator;
       using difference_type = typename etl::ranges::private_ranges::iterator_trait< Range>::difference_type;
 
-      constexpr drop_view(Range&& r, size_t drop_n)
+      constexpr explicit drop_view(Range&& r, size_t drop_n)
         : _r{etl::move(r)}
         , _drop_n{drop_n}
         , _begin_cache{ETL_OR_STD::end(_r)}
@@ -1974,7 +1974,7 @@ namespace etl
       using const_iterator  = typename etl::ranges::private_ranges::iterator_trait< Range>::const_iterator;
       using difference_type = typename etl::ranges::private_ranges::iterator_trait< Range>::difference_type;
 
-      constexpr drop_while_view(Range&& r, Pred pred)
+      constexpr explicit drop_while_view(Range&& r, Pred pred)
         : _r{etl::move(r)}
         , _pred{pred}
         , _begin_cache{}
@@ -2086,7 +2086,7 @@ namespace etl
       using const_iterator  = typename etl::ranges::private_ranges::iterator_trait< Range>::const_iterator;
       using difference_type = typename etl::ranges::private_ranges::iterator_trait< Range>::difference_type;
 
-      constexpr take_view(Range&& r, ranges::range_difference_t<Range> take_n)
+      constexpr explicit take_view(Range&& r, ranges::range_difference_t<Range> take_n)
         : _r{etl::move(r)}
         , _take_n{private_views::min<ranges::range_difference_t<Range>>(take_n, etl::distance(ETL_OR_STD::cbegin(r), ETL_OR_STD::cend(r)))}
       {
@@ -2177,7 +2177,7 @@ namespace etl
       using const_iterator  = typename etl::ranges::private_ranges::iterator_trait< Range>::const_iterator;
       using difference_type = typename etl::ranges::private_ranges::iterator_trait< Range>::difference_type;
 
-      constexpr take_while_view(Range&& r, Pred pred)
+      constexpr explicit take_while_view(Range&& r, Pred pred)
         : _r{etl::move(r)}
         , _pred{etl::move(pred)}
         , _end_cache{}
@@ -2386,7 +2386,7 @@ namespace etl
       using iterator       = join_iterator<Range>;
       using const_iterator = join_iterator<Range>;
 
-      constexpr join_view(Range&& r)
+      constexpr explicit join_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -2623,7 +2623,7 @@ namespace etl
       using iterator       = join_with_iterator<Range, Pattern>;
       using const_iterator = join_with_iterator<Range, Pattern>;
 
-      constexpr join_with_view(Range&& r, Pattern&& pattern)
+      constexpr explicit join_with_view(Range&& r, Pattern&& pattern)
         : _r{etl::move(r)}
         , _pattern{etl::move(pattern)}
       {
@@ -2888,7 +2888,7 @@ namespace etl
       using iterator       = split_iterator<Range, Pattern>;
       using const_iterator = split_iterator<Range, Pattern>;
 
-      constexpr split_view(Range&& r, Pattern&& pattern)
+      constexpr explicit split_view(Range&& r, Pattern&& pattern)
         : _r{etl::move(r)}
         , _pattern{etl::move(pattern)}
       {
@@ -3277,7 +3277,7 @@ namespace etl
       using iterator       = lazy_split_iterator<Range, Pattern>;
       using const_iterator = lazy_split_iterator<Range, Pattern>;
 
-      constexpr lazy_split_view(Range&& r, Pattern&& pattern)
+      constexpr explicit lazy_split_view(Range&& r, Pattern&& pattern)
         : _r{etl::move(r)}
         , _pattern{etl::move(pattern)}
       {
@@ -4210,7 +4210,7 @@ namespace etl
       using const_iterator  = decltype(ETL_OR_STD::cbegin(etl::declval<const Range&>()));
       using difference_type = typename etl::iterator_traits<iterator>::difference_type;
 
-      constexpr common_view(Range&& r)
+      constexpr explicit common_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -4254,7 +4254,7 @@ namespace etl
       using const_iterator  = iterator;
       using difference_type = typename etl::iterator_traits<base_iterator>::difference_type;
 
-      constexpr common_view(Range&& r)
+      constexpr explicit common_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -4413,7 +4413,7 @@ namespace etl
       using iterator       = enumerate_iterator<Range>;
       using const_iterator = enumerate_iterator<Range>;
 
-      constexpr enumerate_view(Range&& r)
+      constexpr explicit enumerate_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -4582,7 +4582,7 @@ namespace etl
       using iterator       = elements_iterator<Range, N>;
       using const_iterator = elements_iterator<Range, N>;
 
-      constexpr elements_view(Range&& r)
+      constexpr explicit elements_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -4820,7 +4820,7 @@ namespace etl
       using iterator       = adjacent_iterator<Range, N>;
       using const_iterator = adjacent_iterator<Range, N>;
 
-      constexpr adjacent_view(Range&& r)
+      constexpr explicit adjacent_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
@@ -5014,7 +5014,7 @@ namespace etl
       using iterator       = adjacent_transform_iterator<Range, Fun, N>;
       using const_iterator = adjacent_transform_iterator<Range, Fun, N>;
 
-      constexpr adjacent_transform_view(Fun f, Range&& r)
+      constexpr explicit adjacent_transform_view(Fun f, Range&& r)
         : _f{f}
         , _r{etl::move(r)}
       {
@@ -5187,7 +5187,7 @@ namespace etl
       using const_iterator  = chunk_iterator<Range>;
       using difference_type = typename etl::ranges::private_ranges::iterator_trait< Range>::difference_type;
 
-      constexpr chunk_view(Range&& r, difference_type chunk_size)
+      constexpr explicit chunk_view(Range&& r, difference_type chunk_size)
         : _r{etl::move(r)}
         , _chunk_size{chunk_size}
       {
@@ -5347,7 +5347,7 @@ namespace etl
       using const_iterator  = slide_iterator<Range>;
       using difference_type = typename etl::ranges::private_ranges::iterator_trait< Range>::difference_type;
 
-      constexpr slide_view(Range&& r, difference_type window_size)
+      constexpr explicit slide_view(Range&& r, difference_type window_size)
         : _r{etl::move(r)}
         , _window_size{window_size}
       {
@@ -5546,7 +5546,7 @@ namespace etl
       using iterator       = chunk_by_iterator<Range, Pred>;
       using const_iterator = chunk_by_iterator<Range, Pred>;
 
-      constexpr chunk_by_view(Range&& r, const Pred& pred)
+      constexpr explicit chunk_by_view(Range&& r, const Pred& pred)
         : _r{etl::move(r)}
         , _pred{pred}
       {
@@ -5713,7 +5713,7 @@ namespace etl
       using const_iterator  = stride_iterator<Range>;
       using difference_type = typename etl::ranges::private_ranges::iterator_trait< Range>::difference_type;
 
-      constexpr stride_view(Range&& r, difference_type stride_n)
+      constexpr explicit stride_view(Range&& r, difference_type stride_n)
         : _r{etl::move(r)}
         , _stride_n{stride_n}
       {
@@ -5920,7 +5920,7 @@ namespace etl
       using iterator       = cartesian_product_iterator<Ranges...>;
       using const_iterator = cartesian_product_iterator<Ranges...>;
 
-      constexpr cartesian_product_view(Ranges&&... r)
+      constexpr explicit cartesian_product_view(Ranges&&... r)
         : _r{etl::move(r)...}
       {
       }
@@ -6093,7 +6093,7 @@ namespace etl
 
       to_input_view(const to_input_view& other) = default;
 
-      constexpr to_input_view(Range&& r)
+      constexpr explicit to_input_view(Range&& r)
         : _r{etl::move(r)}
       {
       }
